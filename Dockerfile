@@ -6,14 +6,14 @@ LABEL authors="Matthew Hanson  <matt.a.hanson@gmail.com>"
 # install system libraries
 RUN \
     yum makecache fast; \
-    yum install -y wget libpng-devel nasm; \
+    yum install -y wget libpng-devel nasm rsync; \
     yum install -y bash-completion --enablerepo=epel; \
     yum clean all; \
     yum autoremove
 
 # versions of packages
 ENV \
-    GDAL_VERSION=3.0.1 \
+    GDAL_VERSION=3.1.0 \
     PROJ_VERSION=6.2.0 \
     GEOS_VERSION=3.8.0 \
     GEOTIFF_VERSION=1.5.1 \
