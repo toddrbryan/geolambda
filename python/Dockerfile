@@ -1,5 +1,5 @@
-ARG VERSION=1.2.0
-FROM developmentseed/geolambda:${VERSION}
+ARG VERSION=2.1.0
+FROM toddbryan/geolambda:${VERSION}
 
 LABEL maintainer="Development Seed <info@developmentseed.org>"
 LABEL authors="Matthew Hanson  <matt.a.hanson@gmail.com>"
@@ -25,4 +25,6 @@ RUN \
     pip install -r requirements-pre.txt; \
     pip install -r requirements.txt
 
-COPY bin/* /usr/local/bin/
+# COPY bin/* /usr/local/bin/
+RUN cp -a /root/.pyenv/versions/3.7.4/bin/gdal* /usr/local/bin/
+RUN cp -a /root/.pyenv/versions/3.7.4/bin/ogr* /usr/local/bin/

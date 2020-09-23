@@ -14,12 +14,12 @@ RUN \
 # versions of packages
 ENV \
     GDAL_VERSION=3.1.0 \
-    PROJ_VERSION=6.2.0 \
-    GEOS_VERSION=3.8.0 \
-    GEOTIFF_VERSION=1.5.1 \
+    PROJ_VERSION=7.1.0 \
+    GEOS_VERSION=3.8.1 \
+    GEOTIFF_VERSION=1.6.0 \
     HDF4_VERSION=4.2.14 \
-    HDF5_VERSION=1.10.5 \
-    NETCDF_VERSION=4.7.1 \
+    HDF5_VERSION=1.12.0 \
+    NETCDF_VERSION=4.7.4 \
     NGHTTP2_VERSION=1.39.2 \
     OPENJPEG_VERSION=2.3.1 \
     CURL_VERSION=7.66.0 \
@@ -28,7 +28,8 @@ ENV \
     SZIP_VERSION=2.1.1 \
     WEBP_VERSION=1.0.3 \
     ZSTD_VERSION=1.4.3 \
-    OPENSSL_VERSION=1.0.2
+    OPENSSL_VERSION=1.0.2 \
+    SQLITE_VERSION=3330000
 
 # Paths to things
 ENV \
@@ -53,11 +54,24 @@ RUN \
     make -j ${NPROC} install; \
     cd ../; rm -rf pkg-config
 
+#sqlite
+RUN \
+    mkdir sqlite; \
+    wget -q -O sqlite.zip https://www.sqlite.org/2020/sqlite-amalgamation-$SQLITE_VERSION.zip; \
+    unzip -j -d sqlite sqlite.zip; cd sqlite; \
+    gcc shell.c sqlite3.c -lpthread -ldl -o sqlite3; \
+    gcc -c sqlite3.c -fPIC; \
+    mv sqlite3 ${PREFIX}/bin; \
+    mv sqlite3.h ${PREFIX}/include; \
+    mv sqlite3.o ${PREFIX}/lib; \
+    cd ..; rm -rf sqlite
+
+
 # proj
 RUN \
     mkdir proj; \
     wget -qO- http://download.osgeo.org/proj/proj-$PROJ_VERSION.tar.gz | tar xvz -C proj --strip-components=1; cd proj; \
-    ./configure --prefix=$PREFIX; \
+    SQLITE3_CFLAGS="-I/usr/local/include" SQLITE3_LIBS="/usr/local/lib/sqlite3.o" ./configure --prefix=$PREFIX; \
     make -j ${NPROC} install; \
     cd ..; rm -rf proj
 
@@ -193,9 +207,9 @@ RUN \
         --with-webp=${PREFIX} \
         --with-zstd=${PREFIX} \
         --with-jpeg=${PREFIX} \
+        --with-proj=${PREFIX} \
         --with-threads=yes \
         --with-curl=${PREFIX}/bin/curl-config \
-        --without-python \
         --without-libtool \
         --with-geos=$PREFIX/bin/geos-config \
         --with-hide-internal-symbols=yes \
