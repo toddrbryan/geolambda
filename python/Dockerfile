@@ -25,6 +25,7 @@ RUN \
     pip install -r requirements-pre.txt; \
     pip install -r requirements.txt
 
+# TRB Done in package script actually
 # COPY bin/* /usr/local/bin/
-RUN cp -a /root/.pyenv/versions/3.7.4/bin/gdal* /usr/local/bin/
-RUN cp -a /root/.pyenv/versions/3.7.4/bin/ogr* /usr/local/bin/
+# RUN cp -a /root/.pyenv/versions/3.7.4/bin/gdal* /usr/local/bin/
+# RUN cp -a /root/.pyenv/versions/3.7.4/bin/ogr* /usr/local/bin/
